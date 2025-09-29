@@ -9,7 +9,6 @@ export interface IOwner {
   phone?: string;
   address?: string;
   picture?: string;
-  isDeleted?: boolean;
   isActive?: "ACTIVE" | "INACTIVE";
   isVerified?: boolean;
   role: "ADMIN";
