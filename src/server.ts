@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Server } from "http";
 import { envVariables } from "./config/env";
 import mongoose from "mongoose";
@@ -27,3 +26,50 @@ const startServer = async () => {
 };
 
 startServer();
+
+process.on("unhandledRejection", (error) => {
+  console.log("Unhandled Rejection detected. Server shutting down.", error);
+
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+
+  process.exit(1);
+});
+
+process.on("uncaughtException", (err) => {
+  console.log("Uncaught Exception detected. Server shuting down.", err);
+
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+
+  process.exit(1);
+});
+
+process.on("SIGTERM", () => {
+  console.log("Sigterm signal received. Server shutting down");
+
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+  process.exit(1);
+});
+
+process.on("SIGINT", () => {
+  console.log("Ctrl + c press, Sigint signal received. Server shutting down");
+
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+
+  process.exit(1);
+});

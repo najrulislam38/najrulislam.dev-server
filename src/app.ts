@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import httpStatus from "http-status-codes";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
 
 const app = express();
 
@@ -10,6 +12,15 @@ app.use(cors({ origin: ["http://localhost:5173/"], credentials: true }));
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     message: "Welcome to the Najrul Islam Developer P. Server.",
+  });
+});
+
+app.use(globalErrorHandler);
+
+app.use((req: Request, res: Response) => {
+  res.status(httpStatus.BAD_REQUEST).json({
+    success: false,
+    message: "Route not found",
   });
 });
 
