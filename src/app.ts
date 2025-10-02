@@ -13,6 +13,7 @@ app.use(cors({ origin: ["http://localhost:5173/"], credentials: true }));
 
 app.use("/api/v1/owner", OwnerRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/projects", authRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
