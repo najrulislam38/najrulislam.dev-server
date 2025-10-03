@@ -3,11 +3,16 @@ import AppError from "../../ErrorHelpers/AppError";
 import { Owner } from "../owner/owner.model";
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
+import { createUserTokens } from "../../utils/ownerToken";
+import { setAuthCookie } from "../../utils/setCookie";
+import { Response } from "express";
 
 const loginFromDB = async ({
+  res,
   email,
   password,
 }: {
+  res: Response;
   email: string;
   password: string;
 }) => {
@@ -26,9 +31,15 @@ const loginFromDB = async ({
     throw new AppError(httpStatus.BAD_REQUEST, "Password didn't matched.");
   }
 
+  const ownerTokens = await createUserTokens(isOwnerExist);
+
+  setAuthCookie(res, ownerTokens);
+
   const { password: pass, ...rest } = isOwnerExist.toObject();
 
   return {
+    accessToken: ownerTokens.accessToken,
+    refreshToken: ownerTokens.refreshToken,
     name: rest?.name,
     email: rest?.email,
   };

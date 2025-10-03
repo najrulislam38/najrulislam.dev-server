@@ -1,3 +1,4 @@
+import { envVariables } from "../../config/env";
 import AppError from "../../ErrorHelpers/AppError";
 import { IOwner } from "./owner.interfase";
 import { Owner } from "./owner.model";
@@ -12,7 +13,10 @@ const createOwnerFromDB = async (payload: Partial<IOwner>) => {
     throw new AppError(400, "This Owner Already Exit");
   }
 
-  const hashPass = await bcryptjs.hash(password as string, 8);
+  const hashPass = await bcryptjs.hash(
+    password as string,
+    envVariables.BCRYPT_SALT_ROUND
+  );
 
   const owner = await Owner.create({
     email,

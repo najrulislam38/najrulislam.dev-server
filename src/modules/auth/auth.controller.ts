@@ -5,7 +5,9 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 
 const login = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.loginFromDB(req.body);
+  const email = req.body.email;
+  const password = req.body?.password;
+  const result = await AuthService.loginFromDB({ res, email, password });
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

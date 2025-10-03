@@ -3,13 +3,14 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { ProjectServices } from "./project.service";
+import httpStatus from "http-status-codes";
 
 const createProject = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await ProjectServices.createProjectFromDB(req.body);
 
     sendResponse(res, {
-      statusCode: 400,
+      statusCode: httpStatus.CREATED,
       success: true,
       message: "Project Created Successfully.",
       data: result,
@@ -17,6 +18,20 @@ const createProject = catchAsync(
   }
 );
 
+const getAllProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await ProjectServices.getAllProjectFromDB();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Projects Retrieved Successfully.",
+      data: result,
+    });
+  }
+);
+
 export const ProjectController = {
   createProject,
+  getAllProject,
 };
