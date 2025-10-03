@@ -1,4 +1,6 @@
 import AppError from "../../ErrorHelpers/AppError";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { projectSearchableFields } from "./project.constant";
 import { IProject } from "./project.interface";
 import { Project } from "./project.modal";
 import httpStatus from "http-status-codes";
@@ -15,10 +17,25 @@ const createProjectFromDB = async (payload: IProject) => {
   return project;
 };
 
-const getAllProjectFromDB = async () => {
-  const projects = await Project.find();
+const getAllProjectFromDB = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(Project.find(), query);
 
-  return projects;
+  const projects = queryBuilder
+    .search(projectSearchableFields)
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const [data, meta] = await Promise.all([
+    projects.build(),
+    queryBuilder.getMeta(),
+  ]);
+
+  return {
+    meta,
+    data,
+  };
 };
 
 export const ProjectServices = {
