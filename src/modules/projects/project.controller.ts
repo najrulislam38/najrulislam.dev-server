@@ -20,7 +20,10 @@ const createProject = catchAsync(
 
 const getAllProject = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await ProjectServices.getAllProjectFromDB();
+    const query = req.query;
+    const result = await ProjectServices.getAllProjectFromDB(
+      query as Record<string, string>
+    );
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -31,7 +34,22 @@ const getAllProject = catchAsync(
   }
 );
 
+const getSingleProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req.params.slug as string;
+    const result = await ProjectServices.getProjectFromDB(slug);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Project Retrieved Successfully.",
+      data: result,
+    });
+  }
+);
+
 export const ProjectController = {
   createProject,
   getAllProject,
+  getSingleProject,
 };

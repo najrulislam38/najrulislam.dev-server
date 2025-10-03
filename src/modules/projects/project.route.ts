@@ -8,4 +8,6 @@ router.get("/", ProjectController.getAllProject);
 
 router.post("/create", checkAuth("ADMIN"), ProjectController.createProject);
 
+router.get("/:slug", ProjectController.getSingleProject);
+
 export const projectRoutes = router;

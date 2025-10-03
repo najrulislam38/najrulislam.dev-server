@@ -28,7 +28,7 @@ const getAllProjectFromDB = async (query: Record<string, string>) => {
     .paginate();
 
   const [data, meta] = await Promise.all([
-    projects.build(),
+    projects.build().populate("owner", "name email picture age"),
     queryBuilder.getMeta(),
   ]);
 
@@ -38,7 +38,21 @@ const getAllProjectFromDB = async (query: Record<string, string>) => {
   };
 };
 
+const getProjectFromDB = async (slug: string) => {
+  const project = await Project.findOne({ slug }).populate(
+    "owner",
+    "name email picture age"
+  );
+
+  if (!project) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Project not found!");
+  }
+
+  return project;
+};
+
 export const ProjectServices = {
   createProjectFromDB,
   getAllProjectFromDB,
+  getProjectFromDB,
 };
