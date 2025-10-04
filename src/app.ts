@@ -5,6 +5,7 @@ import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { OwnerRouter } from "./modules/owner/owner.route";
 import { authRouter } from "./modules/auth/auth.route";
 import { projectRoutes } from "./modules/projects/project.route";
+import { blogRouter } from "./modules/blog/blog.route";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors({ origin: ["http://localhost:5173/"], credentials: true }));
 app.use("/api/v1/owner", OwnerRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/projects", projectRoutes);
+app.use("/api/v1/blogs", blogRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({

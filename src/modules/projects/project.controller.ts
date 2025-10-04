@@ -29,7 +29,8 @@ const getAllProject = catchAsync(
       statusCode: httpStatus.OK,
       success: true,
       message: "Projects Retrieved Successfully.",
-      data: result,
+      meta: result.meta,
+      data: result.data,
     });
   }
 );
