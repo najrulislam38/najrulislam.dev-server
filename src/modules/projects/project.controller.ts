@@ -48,8 +48,38 @@ const getSingleProject = catchAsync(
   }
 );
 
+const updateProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req.params.slug as string;
+    const result = await ProjectServices.updateProjectFromDB(slug, req.body);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Project Updated Successfully.",
+      data: result,
+    });
+  }
+);
+
+const deleteProject = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req.params.slug as string;
+    const result = await ProjectServices.deleteProjectFromDB(slug);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Project Deleted Successfully.",
+      data: null,
+    });
+  }
+);
+
 export const ProjectController = {
   createProject,
   getAllProject,
   getSingleProject,
+  updateProject,
+  deleteProject,
 };

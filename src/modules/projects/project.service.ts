@@ -48,6 +48,40 @@ const getProjectFromDB = async (slug: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Project not found!");
   }
 
+  project.views = project?.views + 1;
+  project.save();
+
+  return project;
+};
+
+const updateProjectFromDB = async (
+  slug: string,
+  payload: Partial<IProject>
+) => {
+  const project = await Project.findOne({ slug });
+
+  if (!project) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Project not found!");
+  }
+
+  const updatedProject = await Project.findOneAndUpdate({ slug }, payload, {
+    new: true,
+    runValidators: true,
+  }).populate("owner", "name email picture age");
+
+  return updatedProject;
+};
+
+const deleteProjectFromDB = async (slug: string) => {
+  const project = await Project.findOneAndDelete({ slug });
+
+  if (!project) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Project not found!. Maybe project already deleted"
+    );
+  }
+
   return project;
 };
 
@@ -55,4 +89,6 @@ export const ProjectServices = {
   createProjectFromDB,
   getAllProjectFromDB,
   getProjectFromDB,
+  updateProjectFromDB,
+  deleteProjectFromDB,
 };

@@ -79,4 +79,25 @@ projectSchema.pre("save", async function (next) {
   next();
 });
 
+projectSchema.pre("findOneAndUpdate", async function (next) {
+  const project = this.getUpdate() as Partial<IProject>;
+
+  if (project.title) {
+    const baseSlug = project.title.toLocaleLowerCase().split(" ").join("-");
+
+    let slug = `${baseSlug}-project`;
+
+    let counter = 0;
+
+    while (await Project.exists({ slug })) {
+      slug = `${slug}-${++counter}`;
+    }
+
+    project.slug = slug;
+  }
+
+  this.setUpdate(project);
+  next();
+});
+
 export const Project = model<IProject>("Project", projectSchema);
