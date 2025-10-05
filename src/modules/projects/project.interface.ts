@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 export interface ITechnologies {
   frontend: string[];
   backend?: string[];
+  database?: string[];
+  tools?: string[];
 }
 
 export interface IProject {
@@ -32,4 +34,5 @@ export interface IProject {
   features: string[];
   challenges: string[];
   futurePlan?: string[];
+  deleteImages?: string[];
 }

@@ -7,7 +7,12 @@ import httpStatus from "http-status-codes";
 
 const createProject = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await ProjectServices.createProjectFromDB(req.body);
+    const payload = {
+      ...req.body,
+      thumbnail: (req.files as Express.Multer.File[])[0]?.path,
+      images: (req.files as Express.Multer.File[])?.map((file) => file?.path),
+    };
+    const result = await ProjectServices.createProjectFromDB(payload);
 
     sendResponse(res, {
       statusCode: httpStatus.CREATED,

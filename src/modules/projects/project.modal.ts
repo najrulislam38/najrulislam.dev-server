@@ -5,6 +5,8 @@ const TechnologiesSchema = new Schema<ITechnologies>(
   {
     frontend: { type: [String], required: true },
     backend: { type: [String] },
+    database: { type: [String] },
+    tools: { type: [String] },
   },
   { _id: false }
 );
@@ -56,6 +58,7 @@ const projectSchema = new Schema<IProject>(
     features: [{ type: String, required: true }],
     challenges: [{ type: String, required: true }],
     futurePlan: [{ type: String }],
+    deleteImages: [{ type: String }],
   },
   {
     timestamps: true,

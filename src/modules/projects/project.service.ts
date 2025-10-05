@@ -1,3 +1,4 @@
+import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 import AppError from "../../ErrorHelpers/AppError";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { projectSearchableFields } from "./project.constant";
@@ -64,10 +65,47 @@ const updateProjectFromDB = async (
     throw new AppError(httpStatus.BAD_REQUEST, "Project not found!");
   }
 
+  if (
+    payload.images &&
+    payload.images.length > 0 &&
+    project.images &&
+    project.images.length > 0
+  ) {
+    payload.images = [...payload.images, ...project.images];
+  }
+
+  if (
+    payload.deleteImages &&
+    payload.deleteImages.length > 0 &&
+    project.images &&
+    project.images.length > 0
+  ) {
+    const resetDBImages = project.images?.filter(
+      (imageUrl) => !payload.deleteImages?.includes(imageUrl)
+    );
+
+    const updatedPayloadImages = (payload.images || [])
+      ?.filter((imageUrl) => !payload.deleteImages?.includes(imageUrl))
+      .filter((imageUrl) => !resetDBImages?.includes(imageUrl));
+
+    payload.images = [...resetDBImages, ...updatedPayloadImages];
+  }
+
   const updatedProject = await Project.findOneAndUpdate({ slug }, payload, {
     new: true,
     runValidators: true,
   }).populate("owner", "name email picture age");
+
+  if (
+    payload.deleteImages &&
+    payload.deleteImages.length > 0 &&
+    project.images &&
+    project.images.length > 0
+  ) {
+    await Promise.all(
+      payload.deleteImages.map((url) => deleteImageFromCloudinary(url))
+    );
+  }
 
   return updatedProject;
 };

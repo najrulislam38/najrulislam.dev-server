@@ -1,3 +1,4 @@
+import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 import AppError from "../../ErrorHelpers/AppError";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { blogSearchableFields } from "./blog.constant";
@@ -65,10 +66,47 @@ const updateBlogFromDB = async ({
     throw new AppError(httpStatus.BAD_REQUEST, "Blog Not Found!");
   }
 
+  if (
+    payload.images &&
+    payload.images.length > 0 &&
+    isExistBlog.images &&
+    isExistBlog.images.length > 0
+  ) {
+    payload.images = [...payload.images, ...isExistBlog.images];
+  }
+
+  if (
+    payload.deleteImages &&
+    payload.deleteImages.length > 0 &&
+    isExistBlog.images &&
+    isExistBlog.images.length > 0
+  ) {
+    const resetDBImages = isExistBlog.images?.filter(
+      (imageUrl) => !payload.deleteImages?.includes(imageUrl)
+    );
+
+    const updatedPayloadImages = (payload.images || [])
+      ?.filter((imageUrl) => !payload.deleteImages?.includes(imageUrl))
+      .filter((imageUrl) => !resetDBImages?.includes(imageUrl));
+
+    payload.images = [...resetDBImages, ...updatedPayloadImages];
+  }
+
   const updatedBlog = await Blog.findOneAndUpdate({ slug }, payload, {
     new: true,
     runValidators: true,
   });
+
+  if (
+    payload.deleteImages &&
+    payload.deleteImages.length > 0 &&
+    isExistBlog.images &&
+    isExistBlog.images.length > 0
+  ) {
+    await Promise.all(
+      payload.deleteImages.map((url) => deleteImageFromCloudinary(url))
+    );
+  }
 
   return updatedBlog;
 };

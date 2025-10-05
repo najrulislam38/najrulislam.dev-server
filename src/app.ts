@@ -6,11 +6,14 @@ import { OwnerRouter } from "./modules/owner/owner.route";
 import { authRouter } from "./modules/auth/auth.route";
 import { projectRoutes } from "./modules/projects/project.route";
 import { blogRouter } from "./modules/blog/blog.route";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 //middleware
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: ["http://localhost:5173/"], credentials: true }));
 
 app.use("/api/v1/owner", OwnerRouter);

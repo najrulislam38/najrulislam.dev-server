@@ -34,6 +34,7 @@ const blogSchema = new Schema<IBlog>(
     likes: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    deleteImages: [{ type: String }],
   },
   {
     timestamps: true,

@@ -8,6 +8,7 @@ import { handleCastError } from "../helpers/handleCastError";
 import { handleValidateError } from "../helpers/handleValidateError";
 import { handleZodError } from "../helpers/handleZodErro";
 import AppError from "../ErrorHelpers/AppError";
+import { deleteImageFromCloudinary } from "../config/cloudinary.config";
 
 export const globalErrorHandler = async (
   err: any,
@@ -22,6 +23,19 @@ export const globalErrorHandler = async (
 
   if (envVariables.NODE_ENV === "development") {
     console.log(err);
+  }
+
+  // cloudinary image destory
+  if (req.file) {
+    await deleteImageFromCloudinary(req.file.path);
+  }
+
+  if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+    const imageUrl = (req.files as Express.Multer.File[]).map(
+      (file) => file.path
+    );
+
+    await Promise.all(imageUrl.map((url) => deleteImageFromCloudinary(url)));
   }
 
   //duplicate Error

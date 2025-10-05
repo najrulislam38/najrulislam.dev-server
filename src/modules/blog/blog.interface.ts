@@ -24,4 +24,5 @@ export interface IBlog {
   likes?: number;
   isFeatured?: boolean;
   isActive?: boolean;
+  deleteImages?: string[];
 }

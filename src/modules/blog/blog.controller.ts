@@ -6,7 +6,26 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 
 const create = catchAsync(async (req: Request, res: Response) => {
-  const result = await BlogService.createFromDB(req.body);
+  // const files = req.files as {
+  //   file?: Express.Multer.File[];
+  //   files?: Express.Multer.File[];
+  // };
+
+  // const thumbnail = files.file?.[0].path;
+  // const images = files.files?.map((file) => file.path) || [];
+  // console.log({
+  //   thumbnail,
+  //   images,
+  //   data: req.body,
+  // });
+
+  const payload = {
+    ...req.body,
+    thumbnail: (req.files as Express.Multer.File[])[0]?.path,
+    images: (req.files as Express.Multer.File[]).map((file) => file?.path),
+  };
+
+  const result = await BlogService.createFromDB(payload);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
